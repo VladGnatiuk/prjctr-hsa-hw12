@@ -1,0 +1,1 @@
+http://myapi:8000/cache_stampede_items/30

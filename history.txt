@@ -1,0 +1,32 @@
+docker-compose up --build
+
+docker-compose exec load-test bash /scripts/load_test.sh
+docker-compose exec load-test bash /scripts/load_test_cached.sh
+docker-compose exec load-test bash /scripts/load_test_cache_stampede.sh
+
+
+Jupyter
+    http://localhost:8888
+
+Redis Commander
+    http://localhost:8081
+
+redisinsight
+    http://localhost:5540
+        Add redis-sentinel:26379 endpoint
+
+myapi
+    http://localhost:9090/items/1
+
+troubleshooting
+    docker exec -it redisinsight sh -c "netstat -tln"
+
+
+
+---
+find . -type f \( -name "*.sh" -o -name "*.conf" \) -exec dos2unix {} \;
+docker-compose up -d
+docker-compose down
+
+docker-compose exec load-test bash
+docker-compose exec myapi bash
