@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using StackExchange.Redis;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace QueueApi.Controllers
 {
@@ -16,27 +17,43 @@ namespace QueueApi.Controllers
         }
 
         [HttpPost("enqueue")]
-        public async Task<IActionResult> Enqueue([FromBody] string message)
+        public async Task<IActionResult> Enqueue([FromBody] EnqueueRequest request)
         {
             var db = _redis.GetDatabase();
-            await db.StreamAddAsync("mystream", new NameValueEntry[] { new NameValueEntry("message", message) });
-            return Ok("Message enqueued");
+            for (int i = 0; i < request.Number; i++)
+            {
+                await db.StreamAddAsync("mystream", new NameValueEntry[] { new NameValueEntry("message", request.Text) });
+            }
+            return Ok($"{request.Number} messages enqueued");
         }
 
         [HttpGet("dequeue")]
-        public async Task<IActionResult> Dequeue()
+        public async Task<IActionResult> Dequeue([FromQuery] int number)
         {
             var db = _redis.GetDatabase();
-            var entries = await db.StreamReadAsync("mystream", "0-0", 1);
+            var messages = new List<string>();
 
-            if (entries.Length > 0)
+            for (int i = 0; i < number; i++)
             {
-                var message = entries[0]["message"];
-                await db.StreamDeleteAsync("mystream", new RedisValue[] { entries[0].Id });
-                return Ok(message);
+                var entries = await db.StreamReadAsync("mystream", "0-0", 1);
+                if (entries.Length > 0)
+                {
+                    var message = entries[0]["message"];
+                    messages.Add(message);
+                    await db.StreamDeleteAsync("mystream", new RedisValue[] { entries[0].Id });
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (messages.Count > 0)
+            {
+                return Ok(messages);
             }
 
             return NotFound("No messages in queue");
         }
     }    
-} 
+}
