@@ -55,5 +55,14 @@ namespace QueueApi.Controllers
 
             return NotFound("No messages in queue");
         }
+
+        [HttpPost("enqueue_dequeue")]
+        public async Task<IActionResult> EnqueueDequeue([FromBody] EnqueueRequest request)
+        {
+            await Enqueue(request);
+            await Dequeue(request.Number);
+            
+            return Ok($"{request.Number} messages enqueued/dequeued");
+        }
     }    
 }

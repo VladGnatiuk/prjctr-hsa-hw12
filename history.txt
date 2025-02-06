@@ -4,6 +4,8 @@ devcontainer up --remove-existing-container --workspace-folder .
 docker stop redisinsight
 docker rm redisinsight
 
+dotnet build
+dotnet run --project QueueApi
 
 http://localhost:8081
 http://localhost:5540/
@@ -26,6 +28,7 @@ dotnet new sln -n hw12
 dotnet new console -n QueueApi
 dotnet sln hw12.sln add QueueApi/QueueApi.csproj
 dotnet build hw12.sln
+dotnet build
 
 
 dotnet add QueueApi package Microsoft.AspNetCore.App
