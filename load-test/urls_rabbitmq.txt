@@ -1,1 +1,1 @@
-http://myapi:8000/items/10
+http://localhost:5000/api/RabbitMQ/enqueue_dequeue POST {"number": 1000,"text": "This is a sample message"}

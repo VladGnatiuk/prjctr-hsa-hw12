@@ -2,6 +2,13 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using RabbitMQ.Client;
+using System.Text;
+using System;
+
 
 namespace QueueApi
 {
@@ -23,6 +30,19 @@ namespace QueueApi
 
                         // Register multiple Redis connections with names
                         services.AddSingleton<IRedisConnectionManager, RedisConnectionManager>();
+
+                                    
+                        var factory = new ConnectionFactory()
+                        {
+                            HostName = "rabbitmq",
+                            UserName = "user", // Replace with your RabbitMQ username
+                            Password = "password"  // Replace with your RabbitMQ password
+                        };
+                        var connection = factory.CreateConnection();
+                        var channel = connection.CreateModel();
+
+                        services.AddSingleton<IModel>(channel);
+                        
                     });
                     webBuilder.Configure((context, app) =>
                     {

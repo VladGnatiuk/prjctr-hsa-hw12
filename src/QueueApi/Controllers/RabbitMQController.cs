@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using StackExchange.Redis;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using System.Text;
+using System;
 
 namespace QueueApi.Controllers
 {
@@ -12,34 +11,24 @@ namespace QueueApi.Controllers
     [Route("api/[controller]")]
     public class RabbitMQController : ControllerBase
     {
-        private readonly IConnection _rabbitMqConnection;
+        private readonly IModel _channel;
+        private const string QueueName = "my_queue";
 
-        public RabbitMQController(IConnection rabbitMqConnection)
+        public RabbitMQController(IModel channel)
         {
-            _rabbitMqConnection = rabbitMqConnection;
+            _channel = channel;
+            _channel.QueueDeclare(queue: QueueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
         }
 
         [HttpPost("enqueue")]
         public async Task<IActionResult> Enqueue([FromBody] EnqueueRequest request)
         {
-            using (var channel = _rabbitMqConnection.CreateModel())
+            for (int i = 0; i < request.Number; i++)
             {
-                channel.QueueDeclare(queue: "my_queue",
-                                     durable: false,
-                                     exclusive: false,
-                                     autoDelete: false,
-                                     arguments: null);
+                string message = $"Message {i + 1}";
+                var body = Encoding.UTF8.GetBytes(message);
 
-                for (int i = 0; i < request.Number; i++)
-                {
-                    string message = $"Message {i + 1}";
-                    var body = Encoding.UTF8.GetBytes(message);
-
-                    channel.BasicPublish(exchange: "",
-                                         routingKey: "my_queue",
-                                         basicProperties: null,
-                                         body: body);
-                }
+                _channel.BasicPublish(exchange: "", routingKey: QueueName, basicProperties: null, body: body);
             }
 
             return Ok($"{request.Number} messages enqueued");
@@ -50,34 +39,18 @@ namespace QueueApi.Controllers
         {
             var messages = new List<string>();
 
-            using (var channel = _rabbitMqConnection.CreateModel())
+            for (int i = 0; i < number; i++)
             {
-                channel.QueueDeclare(queue: "my_queue",
-                                     durable: false,
-                                     exclusive: false,
-                                     autoDelete: false,
-                                     arguments: null);
-
-                var consumer = new EventingBasicConsumer(channel);
-                var messageCount = 0;
-
-                consumer.Received += (model, ea) =>
+                var result = _channel.BasicGet(queue: QueueName, autoAck: true);
+                if (result != null)
                 {
-                    if (messageCount < number)
-                    {
-                        var body = ea.Body.ToArray();
-                        var message = Encoding.UTF8.GetString(body);
-                        messages.Add(message);
-                        messageCount++;
-                    }
-                };
-
-                channel.BasicConsume(queue: "my_queue",
-                                     autoAck: true,
-                                     consumer: consumer);
-
-                // Wait for messages to be consumed
-                await Task.Delay(1000); // Adjust delay as needed
+                    var message = Encoding.UTF8.GetString(result.Body.ToArray());
+                    messages.Add(message);
+                }
+                else
+                {
+                    break; // Exit if no more messages are available
+                }
             }
 
             if (messages.Count > 0)

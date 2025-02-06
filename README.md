@@ -42,3 +42,21 @@ $ ./load_test_redis2.sh
 }
 ```
 
+### RabbitMQ
+```
+$ ./load_test_rabbitmq.sh 
+
+{       "transactions":                           10,
+        "availability":                       100.00,
+        "elapsed_time":                         3.36,
+        "data_transferred":                     0.00,
+        "response_time":                        0.34,
+        "transaction_rate":                     2.98,
+        "throughput":                           0.00,
+        "concurrency":                          1.00,
+        "successful_transactions":                10,
+        "failed_transactions":                     0,
+        "longest_transaction":                  0.35,
+        "shortest_transaction":                 0.31
+}
+```
