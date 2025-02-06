@@ -13,6 +13,7 @@
       "ms-vscode.vscode-typescript-next",
       "ms-vscode.azurecli"
     ],
+    "appPort": [5000],
     "remoteUser": "root",
     "workspaceMount": "source=${localWorkspaceFolder}/src,target=/workspace,type=bind,consistency=cached",
     "workspaceFolder": "/workspace",

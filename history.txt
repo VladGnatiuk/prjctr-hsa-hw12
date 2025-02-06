@@ -13,6 +13,14 @@ dotnet new console -n QueueApi
 dotnet sln hw12.sln add QueueApi/QueueApi.csproj
 dotnet build hw12.sln
 
+
+dotnet add package Microsoft.AspNetCore.App
+
+export ASPNETCORE_URLS="http://localhost:5000"
+dotnet run
+dotnet run --project QueueApi
+
+
 ---
 sudo apt  install jq 
 docker ps -a --format '{{json .}}' | jq '.'
