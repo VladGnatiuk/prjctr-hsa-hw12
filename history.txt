@@ -1,5 +1,25 @@
 docker-compose up --build
 
+---
+# from admin console?
+npm install -g @devcontainers/cli
+
+docker network create my_network
+devcontainer up --workspace-folder .
+devcontainer up --remove-existing-container --workspace-folder .
+---
+dotnet new sln -n hw12
+dotnet new console -n QueueApi
+dotnet sln hw12.sln add QueueApi/QueueApi.csproj
+dotnet build hw12.sln
+
+---
+sudo apt  install jq 
+docker ps -a --format '{{json .}}' | jq '.'
+
+
+--------
+
 docker-compose exec load-test bash /scripts/load_test.sh
 docker-compose exec load-test bash /scripts/load_test_cached.sh
 docker-compose exec load-test bash /scripts/load_test_cache_stampede.sh

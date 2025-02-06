@@ -1,0 +1,25 @@
+{
+    "name": "C# Dev Environment",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "context": ".."
+    },
+    "settings": {
+      "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [
+      "ms-dotnettools.csharp",
+      "ms-dotnettools.csharp-devkit",
+      "ms-vscode.vscode-typescript-next",
+      "ms-vscode.azurecli"
+    ],
+    "remoteUser": "root",
+    "workspaceMount": "source=${localWorkspaceFolder}/src,target=/workspace,type=bind,consistency=cached",
+    "workspaceFolder": "/workspace",
+    "runArgs": [
+      "--network=prctr-hsa-hw12_my_network",
+      "--env-file",
+      ".env"
+    ]
+  }
+  

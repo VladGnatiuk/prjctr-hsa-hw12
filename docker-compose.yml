@@ -9,6 +9,8 @@ services:
     volumes:
       - ./redis1/redis.conf:/usr/local/etc/redis/redis.conf
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - my_network
 
   redis2:
     image: redis:latest
@@ -18,6 +20,8 @@ services:
     volumes:
       - ./redis2/redis.conf:/usr/local/etc/redis/redis.conf
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - my_network
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -28,6 +32,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    networks:
+      - my_network
 
   # jumpbox:
   #   build: ./jumpbox
@@ -58,6 +64,6 @@ services:
   #     - ./load-test/scripts:/scripts
 
 networks:
-  default:
+  my_network:
     driver: bridge
 
