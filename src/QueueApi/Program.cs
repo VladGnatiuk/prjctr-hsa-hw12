@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,9 +17,12 @@ namespace QueueApi
                         int port = int.Parse(context.Configuration["PORT"] ?? "5000");
                         serverOptions.ListenAnyIP(port);
                     });
-                    webBuilder.ConfigureServices(services =>
+                    webBuilder.ConfigureServices((context, services) =>
                     {
                         services.AddControllers();
+
+                        // Register multiple Redis connections with names
+                        services.AddSingleton<IRedisConnectionManager, RedisConnectionManager>();
                     });
                     webBuilder.Configure((context, app) =>
                     {

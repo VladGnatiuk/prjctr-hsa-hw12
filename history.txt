@@ -14,11 +14,18 @@ dotnet sln hw12.sln add QueueApi/QueueApi.csproj
 dotnet build hw12.sln
 
 
-dotnet add package Microsoft.AspNetCore.App
+dotnet add QueueApi package Microsoft.AspNetCore.App
+dotnet add QueueApi package StackExchange.Redis
 
-export ASPNETCORE_URLS="http://localhost:5000"
+
+export PORT="5000"
 dotnet run
 dotnet run --project QueueApi
+
+
+
+http://localhost:5000/api/redisqueue/dequeue
+http://localhost:5000/api/redisqueue/enqueue
 
 
 ---
@@ -58,3 +65,5 @@ docker-compose down
 
 docker-compose exec load-test bash
 docker-compose exec myapi bash
+
+export ASPNETCORE_URLS="http://localhost:5000"
