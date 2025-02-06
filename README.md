@@ -1,4 +1,6 @@
 ### Redis1 - RDB persistence
+Each request has 1,000 push/pull calls.
+
 ```
 save 30 1
 save 10 100
