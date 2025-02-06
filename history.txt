@@ -4,6 +4,10 @@ devcontainer up --remove-existing-container --workspace-folder .
 docker stop redisinsight
 docker rm redisinsight
 
+
+docker-compose exec load-test bash
+docker-compose exec redis1 bash
+
 dotnet build
 dotnet run --project QueueApi
 
@@ -12,8 +16,6 @@ http://localhost:5540/
 
 
 
-docker-compose exec load-test bash
-docker-compose exec redis1 bash
 
 
 ---
@@ -33,7 +35,7 @@ dotnet build
 
 dotnet add QueueApi package Microsoft.AspNetCore.App
 dotnet add QueueApi package StackExchange.Redis
-
+dotnet add QueueApi package RabbitMQ.Client
 
 export PORT="5000"
 dotnet run
