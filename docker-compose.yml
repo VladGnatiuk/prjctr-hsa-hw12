@@ -35,33 +35,39 @@ services:
     networks:
       - my_network
 
-  # jumpbox:
-  #   build: ./jumpbox
-  #   container_name: jumpbox
-  #   ports:
-  #     - "8888:8888"
-  #   volumes:
-  #     - ./jumpbox:/app
-  #   command: jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
-  #   depends_on:
-  #     - redis1
-  #     - redis2
 
-  # myapi:
-  #   build: ./myapi
-  #   ports:
-  #     - "9090:8000"
-  #   volumes:
-  #     - ./myapi:/app
-  #   command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-  #   depends_on:
-  #     - redis1
-  #     - redis2
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local1:redis1:6379,local2:redis2:6379
+    depends_on: 
+      - redis1
+      - redis2
+    networks:
+      - my_network
 
-  # load-test:
-  #   build: ./load-test
-  #   volumes:
-  #     - ./load-test/scripts:/scripts
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redisinsight
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis1
+      - redis2
+    networks:
+      - my_network
+
+  load-test:
+    build: ./load-test
+    volumes:
+      - ./load-test:/workspace
+    depends_on:
+      - redis1
+      - redis2
+    networks:
+      - my_network
 
 networks:
   my_network:

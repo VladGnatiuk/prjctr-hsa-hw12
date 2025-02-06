@@ -1,4 +1,18 @@
 docker-compose up --build
+devcontainer up --remove-existing-container --workspace-folder .
+
+docker stop redisinsight
+docker rm redisinsight
+
+
+http://localhost:8081
+http://localhost:5540/
+
+
+
+docker-compose exec load-test bash
+docker-compose exec redis1 bash
+
 
 ---
 # from admin console?
